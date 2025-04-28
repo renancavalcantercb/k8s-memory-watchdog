@@ -1,53 +1,94 @@
-# k8s-memory-watchdog
+# Kubernetes Memory Watchdog
 
-This tool monitors the total memory usage of pods within a specified Kubernetes namespace.
-If the total memory exceeds a configured threshold, it will restart a specified deployment.
+A service that monitors memory usage of pods in a Kubernetes namespace and automatically restarts deployments when memory usage exceeds a configured threshold.
 
 ## Features
 
-- Monitors memory usage via `kubectl top pods`
-- Automatically restarts a deployment when memory usage exceeds a defined threshold
-- Configurable via command-line flags or environment variables
-- Verbose logging option
+- Continuous monitoring of pod memory usage
+- Automatic deployment restart when memory limit is exceeded
+- Flexible configuration via YAML file or environment variables
+- Prometheus metrics support
+- Configurable logging
+- Graceful shutdown
+- Unit tests
 
-## Usage
+## Requirements
+
+- Go 1.16 or higher
+- Access to a Kubernetes cluster
+- kubectl configured and accessible
+
+## Installation
 
 ```bash
-go run main.go --namespace=my-namespace --deployment=my-app --threshold=5000
+go install github.com/your-username/k8s-memory-watchdog@latest
 ```
 
-Or using environment variables:
+## Configuration
+
+The watchdog can be configured through:
+
+1. YAML configuration file
+2. Environment variables
+3. Command-line flags
+
+### Example usage with flags
 
 ```bash
-export NAMESPACE=my-namespace
-export DEPLOYMENT=my-app
-export MEMORY_THRESHOLD=5000
-go run main.go --verbose
+k8s-memory-watchdog --namespace=my-namespace --deployment=my-app --threshold=5000 --interval=5m
 ```
 
-## Flags
+### Environment variables
 
-| Flag           | Description                                                  |
-|----------------|--------------------------------------------------------------|
-| `--namespace`  | Kubernetes namespace where pods are running                  |
-| `--deployment` | Name of the deployment to restart when memory limit is hit   |
-| `--threshold`  | Memory threshold in MiB (e.g., 5000 for 5Gi)                 |
-| `--kubectl`    | Path to the `kubectl` binary (default: `/usr/local/bin/kubectl`) |
-| `--verbose`    | Enable verbose logging                                       |
+- `NAMESPACE`: Kubernetes namespace (default: "default")
+- `DEPLOYMENT`: Name of the deployment to monitor
+- `MEMORY_THRESHOLD`: Memory threshold in Mi (default: 5000)
+- `KUBECTL_PATH`: Path to kubectl binary (default: "/usr/local/bin/kubectl")
+- `CHECK_INTERVAL`: Check interval (default: "5m")
+- `VERBOSE`: Enable verbose logging (default: false)
 
-## Environment Variables
+### Configuration file
 
-- `NAMESPACE`
-- `DEPLOYMENT`
-- `MEMORY_THRESHOLD`
-- `KUBECTL_PATH`
+See `config.yaml` for all available configuration options.
 
-These can be used as alternatives to the flags.
+## Metrics
 
-## Example Cronjob (Linux)
+The service exposes Prometheus metrics at `/metrics` when enabled:
 
-To run the script every 10 minutes:
+- `k8s_memory_watchdog_memory_usage`: Current memory usage in Mi
+- `k8s_memory_watchdog_deployment_restarts_total`: Total number of restarts
+- `k8s_memory_watchdog_checks_total`: Total number of checks
 
-```cron
-*/10 * * * * /usr/local/go/bin/go run /path/to/main.go --namespace=my-namespace --deployment=my-app --threshold=5000
+## Logging
+
+Logging can be configured for:
+
+- Level: debug, info, warn, error
+- Format: text or json
+- Output: stdout or file
+
+## Development
+
+### Run tests
+
+```bash
+go test -v ./...
 ```
+
+### Build binary
+
+```bash
+go build -o k8s-memory-watchdog
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -am 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Create a Pull Request
+
+## License
+
+MIT
