@@ -21,7 +21,7 @@ A service that monitors memory usage of pods in a Kubernetes namespace and autom
 ## Installation
 
 ```bash
-go install github.com/your-username/k8s-memory-watchdog@latest
+go install github.com/renancavalcantercb/k8s-memory-watchdog@latest
 ```
 
 ## Configuration
