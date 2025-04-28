@@ -1,0 +1,20 @@
+# Kubernetes Memory Watchdog Configuration
+namespace: "default"
+deployment: ""  # Name of the deployment to monitor
+memory_threshold: 5000  # Memory threshold in Mi
+kubectl_path: "/usr/local/bin/kubectl"
+verbose: false
+check_interval: "5m"  # Check interval (format: 1h2m3s)
+
+# Logging configuration
+logging:
+  level: "info"  # debug, info, warn, error
+  format: "text"  # text or json
+  output: "stdout"  # stdout or file
+  file: ""  # Log file path (if output is "file")
+
+# Metrics configuration
+metrics:
+  enabled: true
+  port: 9090
+  path: "/metrics" 
